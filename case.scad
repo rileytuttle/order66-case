@@ -49,7 +49,7 @@ module case()
                 screw_hole(mount_screw, l=30, head=mount_screw_head, thread=false, anchor=TOP, orient=DOWN);
             }
             fudge=1;
-            position(BACK+LEFT+TOP) tag("remove") right(key_spacing*1) back(fudge/2) cuboid([33.95, case_edge_thickness+fudge, case_height-(case_bottom_thickness+standoff_height+pcb_thickness)], anchor=TOP+BACK+LEFT, rounding=3, edges=[BOTTOM+LEFT, BOTTOM+RIGHT])
+            position(BACK+LEFT+TOP) tag("remove") right(41) back(fudge/2) cuboid([15, case_edge_thickness+fudge, 7], anchor=TOP+BACK, rounding=3, edges=[BOTTOM+LEFT, BOTTOM+RIGHT])
             for(pos=[[LEFT, 180], [RIGHT, -90]])
             {
                 position(TOP+pos[0]) fillet(r=3, l=case_edge_thickness+fudge, spin=pos[1], orient=FRONT);
