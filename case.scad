@@ -77,21 +77,28 @@ module key_grid()
     fwd(mount_hole_y_offset)
     fwd(key_spacing/2)
     diff()
-    cuboid([key_spacing*12, key_spacing*5, 2], rounding=2, except=[TOP,BOTTOM,BACK]) {
+    cuboid([key_spacing*12, key_spacing*5, 2], rounding=2, except=[TOP,BOTTOM]) {
         tag("remove") grid_copies(n=[12,5], spacing = [key_spacing, key_spacing]) cuboid([14, 14, 2.5]);
-        for(pos=[[0, [BACK+LEFT, BACK+RIGHT]], [10, [BACK+LEFT]], [11, [BACK+RIGHT]]])
-        {
-            position(BACK+LEFT) right(key_spacing*pos[0]) cuboid([key_spacing, key_spacing, 2], anchor=FRONT+LEFT, rounding=2, edges=pos[1]) tag("remove") cuboid([14, 14, 2.5]);
-        }
-        back(key_spacing/2)
+        // for(pos=[[0, [BACK+LEFT, BACK+RIGHT]], [10, [BACK+LEFT]], [11, [BACK+RIGHT]]])
+        // {
+        //     position(BACK+LEFT) right(key_spacing*pos[0]) cuboid([key_spacing, key_spacing, 2], anchor=FRONT+LEFT, rounding=2, edges=pos[1]) tag("remove") cuboid([14, 14, 2.5]);
+        // }
+        back(key_spacing/2) {
         grid_copies(n=[3,2], spacing=[4*key_spacing, 2*key_spacing]) {
             position(BOTTOM) cyl(d=5, l=pcb_to_key_grid, anchor=TOP);
             position(TOP) screw_hole(mount_screw, l=10, thread=false, anchor=TOP) position(TOP)
-            nut_trap_inline(1, anchor=TOP, spin=0);
+            nut_trap_inline(2, anchor=TOP, spin=0);
+        }
+        move_copies([[-key_spacing*5, -2*key_spacing],
+                     [-key_spacing*5, key_spacing],
+                     [key_spacing*5,key_spacing],
+                     [key_spacing*5,-2*key_spacing],
+                     [0, -2*key_spacing]
+                     ]) position(BOTTOM) cyl(d=5, l=pcb_to_key_grid, anchor=TOP);
         }
     }
 }
 
-case();
+// case();
 // up(10)
-// key_grid();
+key_grid();
