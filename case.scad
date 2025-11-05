@@ -13,7 +13,7 @@ mount_screw="M2";
 mount_contact_diam=5.5;
 
 pcb_size = [228.6, 123];
-case_edge_thickness = 3;
+case_edge_thickness = 3.5;
 standoff_height = 3; // should be taller than thickest component on the back side
 case_bottom_thickness = 3;
 case_height = case_bottom_thickness+standoff_height+pcb_thickness+10;
@@ -34,6 +34,29 @@ switch_2_offset = 46.3;
 switch_2_width = 6;
 switch_1 = true;
 switch_2 = false;
+magnets=true;
+feet_cutouts=true;
+module case_magnets()
+{
+    params = [
+        [-(key_spacing*5)/2, (case_size[1]-case_edge_thickness)/2, 0],
+        [-(key_spacing*5)/2, -(case_size[1]-case_edge_thickness)/2, 0],
+        [key_spacing*5/2, (case_size[1]-case_edge_thickness)/2, 0],
+        [key_spacing*5/2, -(case_size[1]-case_edge_thickness)/2, 0],
+        [-(case_size[0]-case_edge_thickness)/2, 0, 90],
+        [(case_size[0]-case_edge_thickness)/2, 0, 90]
+    ];
+    attachable() {
+        union() {
+            for(param=params)
+            {
+                translate([param[0], param[1]]) cuboid([10, 2, 5], anchor=TOP, spin=param[2]);
+            }
+        }
+        children();
+    }
+}
+
 module case()
 {
     diff() {
@@ -68,6 +91,29 @@ module case()
                 position(TOP+pos[0]) fillet(r=3, l=case_edge_thickness+fudge, spin=pos[1], orient=FRONT);
             }
             }
+            if (magnets) {
+                tag("remove") position(TOP) case_magnets();
+            }
+            if (feet_cutouts)
+            {
+                feet_dist_from_edge = 50;
+                tag("remove") position(BOTTOM) grid_copies(n=[2,2], spacing=[case_size[0] - feet_dist_from_edge, case_size[1]-feet_dist_from_edge]) cyl(d=15, l=0.5, anchor=BOTTOM);
+            }
+         }
+    }
+}
+
+module lid()
+{
+    lid_height = 12 + case_bottom_thickness;
+    lid_size = [case_size[0], case_size[1], lid_height];
+    diff() {
+        cuboid(lid_size, teardrop=true, rounding=4, except=TOP) {
+            position(BOTTOM) tag_diff("remove", "rm", "kp") {
+                up(case_bottom_thickness)
+                cuboid([pcb_size[0]+case_pcb_gap*2, pcb_size[1]+case_pcb_gap*2, lid_height-case_bottom_thickness], anchor=BOTTOM, rounding=3, except=[TOP,BOTTOM]);
+            }
+            tag("remove") position(TOP) case_magnets();
         }
     }
 }
@@ -99,6 +145,8 @@ module key_grid()
     }
 }
 
-// case();
-// up(10)
-key_grid();
+case();
+// up(20)
+// yrot(180)
+// lid();
+// key_grid();
